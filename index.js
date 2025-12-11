@@ -1,11 +1,11 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { createClient } from "@supabase/supabase-js";
 import {
   exportParticipantsToExcel,
   exportSubmissionsToExcel,
 } from "./utility/exportExcel.js";
-const SUPABASE_URL = "https://fobgtpckfrzotpzjghhi.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvYmd0cGNrZnJ6b3RwempnaGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMDc3NDUsImV4cCI6MjA2OTg4Mzc0NX0.kSG6A5qLmAdxNt123az58Yf-jRIa2BSmn296G1mSK04";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const usernameText = document.getElementsByClassName("userNameText")[0];
