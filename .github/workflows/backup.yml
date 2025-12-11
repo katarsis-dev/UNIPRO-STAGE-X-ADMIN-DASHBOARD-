@@ -2,9 +2,8 @@ name: Backup Database Harian
 
 on:
   schedule:
-    # Jalan otomatis setiap jam 00:00 UTC (Jam 7 Pagi WIB)
     - cron: '0 0 * * *'
-  workflow_dispatch: # Biar bisa di-klik manual buat ngetes
+  workflow_dispatch:
 
 jobs:
   backup:
@@ -30,4 +29,4 @@ jobs:
         with:
           name: supabase-backup
           path: backup.dump
-          retention-days: 30 # File disimpan 30 hari di GitHub
+          retention-days: 30
