@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
+  // Kalau ada ini:
+  base: "./", // atau base: '/app/'
   build: {
     rollupOptions: {
       input: {
