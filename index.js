@@ -32,7 +32,6 @@ async function checkAuth() {
     } else if (sessionName.includes("sekret")) {
       usernameText.textContent = "KSK/SEKRETARIS";
     }
-    console.log("User terotentikasi:", session.user.email);
   }
 }
 
@@ -152,7 +151,8 @@ async function loadParticipants() {
   try {
     // 3. Request API ke Supabase
     const { data, error } = await supabase.from("participants").select("*");
-
+    document.getElementsByClassName("total_peserta")[0].textContent =
+      data.length;
     if (error) {
       console.error("Error mengambil data:", error);
       throw error;

@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    console.log("test");
     
 
     const email = document.getElementById("login-email").value;
