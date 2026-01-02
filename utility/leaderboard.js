@@ -15,6 +15,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       await supabase.auth.signOut();
       window.location.href = "index.html";
     });
+
+  // Event Listener Tombol Export Excel
+  const exportBtn = document.getElementById("export-excel-btn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", exportToExcel);
+  }
 });
 
 async function verifyUserAndShowName() {
@@ -40,7 +46,6 @@ async function verifyUserAndShowName() {
 
 async function loadLeaderboard() {
   const tbody = document.getElementById("leaderboard-body");
-
   try {
     const { data: leaderboard, error } = await supabase
       .from("klasemen_final")
@@ -48,7 +53,6 @@ async function loadLeaderboard() {
       .order("nilai_rata_rata", { ascending: false });
 
     if (error) throw error;
-
     tbody.innerHTML = "";
 
     if (leaderboard.length === 0) {
@@ -60,17 +64,18 @@ async function loadLeaderboard() {
       let rank = index + 1;
       let rankBadge = `<span class="fw-bold text-secondary">#${rank}</span>`;
       let rowClass = "";
-      let statusIcon = "";
+      let trophy = "";
 
       if (rank <= 10) {
-        rankBadge = `<span class="badge bg-success border border-success rounded-pill px-3">
-                        <i class="bi bi-check-circle-fill me-1"></i> #${rank}
-                     </span>`;
-
+        rankBadge = `<span class="badge bg-success border border-success rounded-pill px-3"><i class="bi bi-check-circle-fill me-1"></i> #${rank}</span>`;
         rowClass = "qualified-row";
-
-        statusIcon = `<span class="text-success fw-bold ms-2" style="font-size: 0.8em;">(Lolos)</span>`;
       }
+
+      // Logic Juara 1-3 tetap ada buat Icon Piala
+      if (rank === 1) trophy = "🥇";
+      else if (rank === 2) trophy = "🥈";
+      else if (rank === 3) trophy = "🥉";
+
       const scoreDisplay = row.nilai_rata_rata
         ? parseFloat(row.nilai_rata_rata).toFixed(2)
         : "0.00";
@@ -80,7 +85,7 @@ async function loadLeaderboard() {
         `
         <tr class="${rowClass}">
           <td class="text-center fs-5">${rankBadge}</td>
-          <td><h6 class="mb-0 fw-bold">${row.team_name}</h6></td>
+          <td><h6 class="mb-0 fw-bold">${trophy} ${row.team_name}</h6></td>
           <td class="text-muted">${row.school_name || "-"}</td>
           <td class="text-center">
             <span class="badge bg-info bg-opacity-10 text-info border border-info">${
@@ -102,23 +107,19 @@ async function loadLeaderboard() {
 
 async function loadJuryTables() {
   const container = document.getElementById("jury-tables-container");
-
   try {
     const { data: scoresData, error: errScores } = await supabase
       .from("scores")
       .select("*, participants ( team_name, school_name )");
-
     if (errScores) throw errScores;
 
     const { data: juries, error: errJuries } = await supabase
       .from("profiles")
       .select("id, nama_lengkap")
       .eq("role", "juri");
-
     if (errJuries) throw errJuries;
 
     container.innerHTML = "";
-
     if (juries.length === 0) {
       container.innerHTML = `<div class="col-12 alert alert-warning">Tidak ada juri terdaftar.</div>`;
       return;
@@ -136,7 +137,6 @@ async function loadJuryTables() {
           const final = score.total_score
             ? parseFloat(score.total_score).toFixed(2)
             : "0.00";
-
           tableContent += `
             <tr>
               <td>${idx + 1}</td>
@@ -189,3 +189,119 @@ async function loadJuryTables() {
     container.innerHTML = `<div class="col-12 alert alert-danger">Error: ${error.message}</div>`;
   }
 }
+
+// --- FUNGSI EXPORT EXCEL (VERSI MULTI-SHEET PER JURI) ---
+async function exportToExcel() {
+  const btn = document.getElementById("export-excel-btn");
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Downloading...`;
+  btn.disabled = true;
+
+  try {
+    // 1. Ambil Data Klasemen (Untuk Sheet 1)
+    const { data: leaderboardData, error: err1 } = await supabase
+      .from("klasemen_final")
+      .select("*")
+      .order("nilai_rata_rata", { ascending: false });
+
+    if (err1) throw err1;
+
+    // 2. Ambil Data Detail Nilai (Lengkap dengan ID Juri)
+    const { data: scoresData, error: err2 } = await supabase.from("scores")
+      .select(`
+        judge_id,
+        kriteria_1, kriteria_2, kriteria_3, kriteria_4, total_score,
+        participants (team_name, school_name),
+        profiles (nama_lengkap)
+      `);
+
+    if (err2) throw err2;
+
+    // 3. Setup Workbook Baru
+    const wb = XLSX.utils.book_new();
+
+    // --- SHEET 1: KLASEMEN AKHIR ---
+    const sheetKlasemen = (leaderboardData || []).map((row, index) => ({
+      Peringkat: index + 1,
+      "Nama Tim": row.team_name,
+      "Asal Sekolah": row.school_name,
+      "Jumlah Juri": row.jumlah_juri,
+      "Nilai Rata-Rata": row.nilai_rata_rata
+        ? parseFloat(row.nilai_rata_rata).toFixed(2)
+        : "0.00",
+    }));
+
+    const wsKlasemen = XLSX.utils.json_to_sheet(sheetKlasemen);
+    wsKlasemen["!cols"] = [
+      { wch: 10 },
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 15 },
+    ];
+    XLSX.utils.book_append_sheet(wb, wsKlasemen, "Klasemen Akhir");
+
+    // --- SHEET DINAMIS: PER JURI ---
+    // Cari ada Juri siapa aja di data scores
+    const uniqueJudges = {};
+    (scoresData || []).forEach((row) => {
+      if (row.judge_id && row.profiles) {
+        uniqueJudges[row.judge_id] = row.profiles.nama_lengkap;
+      }
+    });
+
+    // Loop setiap juri untuk bikin Sheet khusus mereka
+    Object.keys(uniqueJudges).forEach((judgeId, index) => {
+      const judgeName = uniqueJudges[judgeId];
+
+      // Filter nilai cuma punya juri ini
+      const myScores = scoresData.filter((s) => s.judge_id === judgeId);
+
+      // Format datanya
+      const sheetJuriData = myScores.map((row, idx) => ({
+        No: idx + 1,
+        "Nama Tim": row.participants?.team_name || "Unknown",
+        Sekolah: row.participants?.school_name || "-",
+        "K1 (UI/UX)": row.kriteria_1,
+        "K2 (Kesesuaian Inovasi,Kreatifitas Dan Tema)": row.kriteria_2,
+        "K3 (Daya Tarik & Informatif)": row.kriteria_3,
+        "K4 (Responsive / Mobile Friendly)": row.kriteria_4,
+        "Total Skor": row.total_score
+          ? parseFloat(row.total_score).toFixed(2)
+          : "0.00",
+      }));
+
+      // Bikin Sheet
+      const wsJuri = XLSX.utils.json_to_sheet(sheetJuriData);
+
+      // Atur lebar kolom
+      wsJuri["!cols"] = [
+        { wch: 5 }, // No
+        { wch: 30 }, // Tim
+        { wch: 25 }, // Sekolah
+        { wch: 10 }, // K1
+        { wch: 10 }, // K2
+        { wch: 10 }, // K3
+        { wch: 12 }, // K4
+        { wch: 12 }, // Total
+      ];
+
+      // Nama Sheet (Excel max 31 karakter, jadi kita potong kalo kepanjangan)
+      // Contoh Output: "Juri 1 - Budi", "Juri 2 - Siti"
+      let safeSheetName = `Juri ${index + 1} - ${judgeName}`
+        .replace(/[\\/?*[\]]/g, "")
+        .substring(0, 30);
+
+      XLSX.utils.book_append_sheet(wb, wsJuri, safeSheetName);
+    });
+
+    // 4. Download File
+    XLSX.writeFile(wb, "Rekap_Nilai_UNIPRO.xlsx");
+  } catch (error) {
+    console.error("Gagal export excel:", error);
+    alert("Gagal export: " + error.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+} 

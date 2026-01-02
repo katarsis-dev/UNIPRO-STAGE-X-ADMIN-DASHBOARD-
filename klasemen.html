@@ -145,14 +145,18 @@
         </header>
 
         <div
-          class="page-heading d-flex justify-content-between align-items-center"
+          class="page-heading d-flex flex-wrap justify-content-between align-items-center gap-3"
         >
           <h3>Hasil Akhir & Klasemen</h3>
-          <button class="btn btn-primary" onclick="window.print()">
-            <i class="bi bi-printer-fill"></i> Cetak Laporan
-          </button>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success" id="export-excel-btn">
+              <i class="bi bi-file-earmark-excel-fill"></i> Export Excel
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <i class="bi bi-printer-fill"></i> Cetak Laporan
+            </button>
+          </div>
         </div>
-
         <div class="page-content">
           <section class="section">
             <div class="card border-0 shadow-sm">
@@ -407,6 +411,7 @@
       </div>
     </div>
 
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="assets/static/js/components/dark.js"></script>
     <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="assets/compiled/js/app.js"></script>
