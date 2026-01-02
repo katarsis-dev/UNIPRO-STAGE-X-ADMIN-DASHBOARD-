@@ -21,17 +21,7 @@ async function checkAuth() {
   } else {
     let sessionName = session.user.email;
 
-    if (sessionName.includes("acara")) {
-      usernameText.textContent = "Div Acara";
-    } else if (sessionName.includes("juri3")) {
-      usernameText.textContent = "Juri 3 (Juri)";
-    } else if (sessionName.includes("ambanafi")) {
-      usernameText.textContent = "Nafiul (Juri)";
-    } else if (sessionName.includes("andriano")) {
-      usernameText.textContent = "Andri (Juri)";
-    } else if (sessionName.includes("sekret")) {
-      usernameText.textContent = "KSK/SEKRETARIS";
-    }
+    usernameText.textContent = "Admin";
   }
 }
 
@@ -253,13 +243,113 @@ async function loadParticipants() {
   }
 }
 
-// 5. Panggil fungsi saat halaman selesai dimuat
+async function loadJuryTables() {
+  const container = document.getElementById("jury-tables-container");
+
+  try {
+    const { data: scoresData, error: errScores } = await supabase.from("scores")
+      .select(`
+                *,
+                participants ( team_name, school_name )
+            `);
+
+    if (errScores) throw errScores;
+
+    const { data: juries, error: errJuries } = await supabase
+      .from("profiles")
+      .select("id, nama_lengkap")
+      .eq("role", "juri");
+
+    if (errJuries) throw errJuries;
+
+    container.innerHTML = "";
+
+    if (juries.length === 0) {
+      container.innerHTML = `<div class="alert alert-warning">Belum ada juri terdaftar.</div>`;
+      return;
+    }
+
+    juries.forEach((juri) => {
+      const juryScores = scoresData.filter((s) => s.judge_id === juri.id);
+
+      let tableContent = "";
+
+      if (juryScores.length === 0) {
+        tableContent = `<tr><td colspan="6" class="text-center text-muted">Juri ini belum memberikan penilaian.</td></tr>`;
+      } else {
+        juryScores.forEach((score, idx) => {
+          const teamName = score.participants
+            ? score.participants.team_name
+            : "Tim Terhapus";
+          const school = score.participants
+            ? score.participants.school_name
+            : "-";
+
+          const finalScore = score.total_score
+            ? parseFloat(score.total_score).toFixed(2)
+            : "0.00";
+
+          tableContent += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>
+                                <span class="fw-bold">${teamName}</span><br>
+                                <small class="text-muted">${school}</small>
+                            </td>
+                            <td class="text-center">${score.kriteria_1}</td>
+                            <td class="text-center">${score.kriteria_2}</td>
+                            <td class="text-center">${score.kriteria_3}</td>
+                            <td class="text-center">${score.kriteria_4}</td>
+                            <td class="text-end fw-bold text-primary">${finalScore}</td>
+                        </tr>
+                    `;
+        });
+      }
+
+      const juryCard = `
+                <div class="col-12 col-xl-6 mb-4">
+                    <div class="card border-top border-primary border-3 shadow-sm">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-person-badge-fill me-2"></i> ${juri.nama_lengkap}
+                            </h5>
+                            <span class="badge bg-primary">${juryScores.length} Tim Dinilai</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tim</th>
+                                            <th title="UI/UX (30%)">K1</th>
+                                            <th title="Fitur (30%)">K2</th>
+                                            <th title="Inovasi (25%)">K3</th>
+                                            <th title="Presentasi (15%)">K4</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tableContent}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+      container.insertAdjacentHTML("beforeend", juryCard);
+    });
+  } catch (error) {
+    console.error("Gagal load tabel juri:", error);
+    container.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+  }
+}
 
 async function handleStatusClick(button) {
-  // Ambil ID dan status dari data-attributes tombol
-
   const participantId = button.dataset.id;
-  const currentStatus = button.dataset.currentStatus === "true"; // Konversi string "true" ke boolean true
+  const currentStatus = button.dataset.currentStatus === "true";
   const participantEmail = button.dataset.email;
   const teamName = button.dataset.teamName;
   if (currentStatus) {
@@ -267,81 +357,69 @@ async function handleStatusClick(button) {
     return;
   }
 
-  // 2. TAMPILKAN BOX KONFIRMASI
   const isConfirmed = confirm(
     "Apakah Anda yakin ingin mengubah status pembayaran peserta ini menjadi LUNAS?\n\nPerubahan ini permanen."
   );
 
-  // 3. JIKA "NO" (false), hentikan fungsi
   if (!isConfirmed) {
     return;
   }
 
-  // 4. JIKA "YES" (true), lanjutkan proses update
   try {
-    // Tampilkan indikator loading (opsional)
     button.querySelector(".badge").textContent = "Loading...";
     button.disabled = true;
 
-    // UPDATE SUPABASE
-    // Cari baris dengan 'id' yang cocok dan ubah 'payment_status' jadi true
     const { error } = await supabase
       .from("participants")
       .update({ payment_status: true })
       .eq("id", participantId);
 
     if (error) {
-      // Jika Supabase error, lempar error agar ditangkap 'catch'
       throw error;
     }
 
     try {
       const { error: emailError } = await supabase.functions.invoke(
-        "resend-email", // Nama function yang kita deploy
+        "resend-email",
         {
           body: { email: participantEmail, team_name: teamName },
         }
       );
 
-      if (emailError) throw emailError; // Lempar jika email gagal
+      if (emailError) throw emailError;
 
-      // Kalo sukses semua
       alert(
         `Sukses! Status di-update DAN email terkirim ke ${participantEmail}.`
       );
     } catch (emailError) {
-      // Kalo cuma email-nya yg gagal
       alert(
         `PERHATIAN: Status BERHASIL di-update, tapi email GAGAL terkirim. Cek log.`
       );
       console.error("Email send error:", emailError);
     }
 
-    // 5. UPDATE FRONTEND (Tampilan)
-    // Ambil badge di dalam tombol
     const badge = button.querySelector(".badge");
-    badge.classList.remove("bg-warning"); // Hapus class 'pending'
-    badge.classList.add("bg-success"); // Tambah class 'lunas'
-    badge.textContent = "LUNAS"; // Ubah teks
+    badge.classList.remove("bg-warning");
+    badge.classList.add("bg-success");
+    badge.textContent = "LUNAS";
 
-    // 6. Update data-attribute & pastikan tombol disabled
     button.dataset.currentStatus = "true";
     button.disabled = true;
   } catch (error) {
     console.error("Error update status:", error);
     alert("Gagal mengupdate status: " + error.message);
 
-    // Kembalikan tampilan tombol ke 'Pending' jika gagal
     const badge = button.querySelector(".badge");
     badge.textContent = "Pending";
-    badge.classList.remove("bg-success"); // Pastikan tidak ada class sukses
-    badge.classList.add("bg-warning"); // Kembalikan class warning
-    button.disabled = false; // Aktifkan lagi tombolnya agar bisa dicoba lagi
+    badge.classList.remove("bg-success");
+    badge.classList.add("bg-warning");
+    button.disabled = false;
   }
 }
 document.addEventListener("DOMContentLoaded", () => {
   loadParticipants();
   loadSubmissions();
+  loadJuryTables();
   const tableBody = document.getElementById("participants-body");
 
   const logoutButton = document.getElementById("logout-button");

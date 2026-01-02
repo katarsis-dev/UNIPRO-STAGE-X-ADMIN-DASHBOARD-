@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hasil Penjurian - Mazer UNIPRO STAGE X</title>
+
+    <link
+      rel="shortcut icon"
+      href="./assets/compiled/svg/favicon.svg"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="./assets/compiled/css/app.css" />
+    <link rel="stylesheet" href="./assets/compiled/css/app-dark.css" />
+    <link rel="stylesheet" href="./assets/compiled/css/iconly.css" />
+
+    <style>
+      .qualified-row {
+        background-color: rgba(25, 135, 84, 0.15) !important;
+      }
+
+      [data-bs-theme="dark"] .qualified-row {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="./utility/leaderboard.js" type="module"></script>
+
+    <script src="assets/static/js/initTheme.js"></script>
+    <div id="app">
+      <div id="sidebar">
+        <div class="sidebar-wrapper active">
+          <div class="sidebar-header position-relative">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="logo">
+                <i class="bi bi-person-circle fs-4"></i>
+                <h6 class="userNameText d-inline-block ms-2 mb-0">Admin</h6>
+              </div>
+
+              <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  role="img"
+                  class="iconify iconify--system-uicons"
+                  width="20"
+                  height="20"
+                  preserveAspectRatio="xMidYMid meet"
+                  viewBox="0 0 21 21"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M10.5 14.5c2.219 0 4-1.763 4-3.982a4.003 4.003 0 0 0-4-4.018c-2.219 0-4 1.781-4 4c0 2.219 1.781 4 4 4zM4.136 4.136L5.55 5.55m9.9 9.9l1.414 1.414M1.5 10.5h2m14 0h2M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2"
+                      opacity=".3"
+                    ></path>
+                    <g transform="translate(-210 -1)">
+                      <path d="M220.5 2.5v2m6.5.5l-1.5 1.5"></path>
+                      <circle cx="220.5" cy="11.5" r="4"></circle>
+                      <path
+                        d="m214 5l1.5 1.5m5 14v-2m6.5-.5l-1.5-1.5M214 18l1.5-1.5m-4-5h2m14 0h2"
+                      ></path>
+                    </g>
+                  </g>
+                </svg>
+                <div class="form-check form-switch fs-6">
+                  <input
+                    class="form-check-input me-0"
+                    type="checkbox"
+                    id="toggle-dark"
+                    style="cursor: pointer"
+                  />
+                  <label class="form-check-label"></label>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  role="img"
+                  class="iconify iconify--mdi"
+                  width="20"
+                  height="20"
+                  preserveAspectRatio="xMidYMid meet"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="currentColor"
+                    d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3l3.19.09m3.5 6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95l2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85c-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14c.4-.4.82-.76 1.27-1.08c.75-.53 1.93.36 1.85 1.19c-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82c-2.81 3.14-2.7 7.96.31 10.98c3.02 3.01 7.84 3.12 10.98.31Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="sidebar-toggler x">
+                <a href="#" class="sidebar-hide d-xl-none d-block"
+                  ><i class="bi bi-x bi-middle"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar-menu">
+            <ul class="menu">
+              <li class="sidebar-title">Menu</li>
+
+              <li class="sidebar-item">
+                <a href="dashboard.html" class="sidebar-link">
+                  <i class="bi bi-grid-fill"></i>
+                  <span>Home</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a href="penjurian.html" class="sidebar-link">
+                  <i class="iconly-boldProfile"></i>
+                  <span>Penjurian</span>
+                </a>
+              </li>
+              <li class="sidebar-item active">
+                <a href="klasemen.html" class="sidebar-link">
+                  <i class="iconly-boldTrophy">🏆</i>
+                  <span>Hasil Penjurian</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <button id="logout-button" class="btn btn-danger w-100">
+                  <i class="bi bi-box-arrow-left"></i>
+                  <span>Log Out</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="main">
+        <header class="mb-3">
+          <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+          </a>
+        </header>
+
+        <div
+          class="page-heading d-flex justify-content-between align-items-center"
+        >
+          <h3>Hasil Akhir & Klasemen</h3>
+          <button class="btn btn-primary" onclick="window.print()">
+            <i class="bi bi-printer-fill"></i> Cetak Laporan
+          </button>
+        </div>
+
+        <div class="page-content">
+          <section class="section">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header border-bottom-0 pb-0">
+                <h5 class="card-title mb-0">
+                  <i class="bi bi-display me-2"></i>Preview Submission
+                </h5>
+                <p class="text-muted small mt-2">
+                  Klik tombol di bawah untuk melihat hasil deploy website
+                  peserta.
+                </p>
+              </div>
+
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/Health-web-Z&CoDev"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 1 (Z&CoDev)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/klinik_SmartOneCare"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 2 (SmartOneCare)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/KLINIKSTIBAJRA-TR"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body">Preview Web 3 (TR)</span>
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/lumivue-website_triovertime"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 4 (triovertime)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/SMAGHISA/web kesehatan 2.html"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 5 (SMAGHISA)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/smilebox-panasea"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 6 (panasea)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/StageX_TekniKarya"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 7 (TekniKarya)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/statis-klinik_pak-mati-lampu"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 8 (pak-mati-lampu)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/unipro klinik-FavTech"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 9 (FavTech)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/unipro-team-2_SmartoneHealth"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 10 (SmartOneHealth)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/uniPro_Medic-Care"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 11 (Medic Care)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/WEB-FOR-CONTEST-UNIPRO-BURJ-KHALIFA"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 12 (BURJ KHALIFA)</span
+                      >
+                    </a>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-xl-3">
+                    <a
+                      href="https://starlit-gumdrop-48e138.netlify.app/WEB_OPPRA"
+                      target="_blank"
+                      class="btn btn-outline-primary w-100 h-100 d-flex align-items-center justify-content-start p-3 shadow-sm text-start"
+                    >
+                      <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                        <i class="bi bi-globe fs-4 text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-body"
+                        >Preview Web 13 (WEB_OPPRA)</span
+                      >
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">🏆 Klasemen Akhir (Live Update)</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover table-lg mb-0 align-middle">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 10%">Rank</th>
+                        <th>Nama Tim</th>
+                        <th>Asal Sekolah</th>
+                        <th class="text-center">Juri Masuk</th>
+                        <th class="text-end pe-4">Nilai Akhir (Rata-rata)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                      <tr>
+                        <td colspan="5" class="text-center py-4">
+                          <span class="spinner-border text-primary"></span>
+                          Menghitung data...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <h5 class="mb-3 mt-5">
+              <i class="bi bi-grid-1x2"></i> Detail Penilaian Per Juri
+            </h5>
+
+            <div class="row" id="jury-tables-container">
+              <div class="col-12 text-center py-5">
+                <span class="spinner-border spinner-border-sm"></span> Memuat
+                detail juri...
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/static/js/components/dark.js"></script>
+    <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="assets/compiled/js/app.js"></script>
+  </body>
+</html>

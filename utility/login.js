@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    
 
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitButton = loginForm.querySelector('button[type="submit"]');
     submitButton.disabled = true;
     submitButton.textContent = "Logging in...";
-    loginError.style.display = "none"; 
+    loginError.style.display = "none";
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -30,13 +29,24 @@ document.addEventListener("DOMContentLoaded", () => {
         password: password,
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (data.session) {
-        alert("Login Berhasil!");
-        window.location.href = "dashboard.html"; 
+        const userId = data.user.id;
+
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", userId)
+          .single();
+
+        if (profile && profile.role === "juri") {
+          alert("Login Berhasil! Selamat Datang Juri.");
+          window.location.href = "penjurian.html";
+        } else {
+          alert("Login Admin Berhasil!");
+          window.location.href = "dashboard.html";
+        }
       }
     } catch (error) {
       console.error("Login error:", error.message);
