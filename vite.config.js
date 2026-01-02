@@ -14,6 +14,9 @@ export default defineConfig({
         dashboard: resolve(__dirname, "dashboard.html"),
         bisagasih: resolve(__dirname, "bisagasih.html"),
 
+        penjurian: resolve(__dirname, "penjurian.html"),
+        klasemen: resolve(__dirname, "klasemen.html"),
+
         // Kalau ada halaman lain, tambah di sini...
         // profile: resolve(__dirname, 'profile.html'),
       },
